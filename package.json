@@ -2,6 +2,7 @@
   "name": "uxqa",
   "version": "1.0.0",
   "description": "UXQA JavaScript Library for CDN Distribution",
+  "type": "module",
   "main": "dist/uxqa.js",
   "module": "dist/uxqa.esm.js",
   "types": "dist/index.d.ts",
