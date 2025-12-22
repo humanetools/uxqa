@@ -1,0 +1,37 @@
+{
+  "name": "uxqa",
+  "version": "1.0.0",
+  "description": "UXQA JavaScript Library for CDN Distribution",
+  "main": "dist/uxqa.js",
+  "module": "dist/uxqa.esm.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "rollup -c",
+    "dev": "rollup -c -w",
+    "test": "jest",
+    "lint": "eslint src --ext .ts"
+  },
+  "keywords": [
+    "uxqa",
+    "performance",
+    "monitoring",
+    "analytics"
+  ],
+  "author": "Your Name",
+  "license": "MIT",
+  "devDependencies": {
+    "@rollup/plugin-commonjs": "^25.0.7",
+    "@rollup/plugin-node-resolve": "^15.2.3",
+    "@rollup/plugin-terser": "^0.4.4",
+    "@rollup/plugin-typescript": "^11.1.6",
+    "@types/node": "^20.11.5",
+    "eslint": "^8.56.0",
+    "jest": "^29.7.0",
+    "rollup": "^4.9.6",
+    "tslib": "^2.6.2",
+    "typescript": "^5.3.3"
+  },
+  "dependencies": {
+    "web-vitals": "^3.5.1"
+  }
+}

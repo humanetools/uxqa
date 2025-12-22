@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UXQA 사용 예제</title>
+  
+  <!-- UXQA 설정 -->
+  <script>
+    window.uxqaConfig = {
+      apiKey: 'demo-api-key',
+      endpoint: 'https://api.uxqa.io/collect',
+      modules: {
+        performance: true,
+        network: true,
+        interaction: true,
+        resource: true
+      },
+      debug: true // 개발 시 true로 설정하여 콘솔 로그 확인
+    };
+  </script>
+  
+  <!-- UXQA 라이브러리 로드 -->
+  <script src="dist/uxqa.js"></script>
+  
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      max-width: 800px;
+      margin: 50px auto;
+      padding: 20px;
+    }
+    
+    .test-section {
+      margin: 30px 0;
+      padding: 20px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+    }
+    
+    button {
+      padding: 10px 20px;
+      margin: 5px;
+      cursor: pointer;
+      background: #007bff;
+      color: white;
+      border: none;
+      border-radius: 4px;
+    }
+    
+    button:hover {
+      background: #0056b3;
+    }
+    
+    .dead-click-btn {
+      background: #dc3545;
+    }
+    
+    img {
+      max-width: 200px;
+      margin: 10px;
+    }
+  </style>
+</head>
+<body>
+  <h1>UXQA 테스트 페이지</h1>
+  
+  <div class="test-section">
+    <h2>Performance 테스트</h2>
+    <p>이 페이지가 로드되면 자동으로 Web Vitals와 Page Performance가 측정됩니다.</p>
+    <p>개발자 도구 콘솔을 열어 dataLayer 이벤트를 확인하세요.</p>
+  </div>
+  
+  <div class="test-section">
+    <h2>Interaction 테스트 - Dead Click</h2>
+    <p>아래 버튼을 클릭하면 Dead Click으로 감지됩니다 (아무 동작도 하지 않음):</p>
+    <button class="dead-click-btn">Dead Click 테스트</button>
+    
+    <p>이 버튼은 정상 동작합니다:</p>
+    <button onclick="alert('정상 동작!')">정상 버튼</button>
+  </div>
+  
+  <div class="test-section">
+    <h2>Resource 테스트 - Broken Image</h2>
+    <p>존재하지 않는 이미지 (에러 발생):</p>
+    <img src="https://invalid-domain-12345.com/image.jpg" alt="Broken Image">
+    
+    <p>정상 이미지:</p>
+    <img src="https://via.placeholder.com/200" alt="Valid Image">
+  </div>
+  
+  <div class="test-section">
+    <h2>Network 테스트 - Third Party API</h2>
+    <button onclick="testThirdPartyAPI()">Third Party API 에러 발생시키기</button>
+    <div id="api-result"></div>
+  </div>
+  
+  <script>
+    // Third Party API 테스트
+    function testThirdPartyAPI() {
+      const resultDiv = document.getElementById('api-result');
+      resultDiv.innerHTML = 'API 호출 중...';
+      
+      // 존재하지 않는 외부 API 호출 (에러 발생)
+      fetch('https://invalid-api-domain-12345.com/data')
+        .then(response => response.json())
+        .then(data => {
+          resultDiv.innerHTML = '성공: ' + JSON.stringify(data);
+        })
+        .catch(error => {
+          resultDiv.innerHTML = '에러 발생! (dataLayer에 기록됨)';
+          console.error('API Error:', error);
+        });
+    }
+    
+    // DataLayer 이벤트 모니터링
+    window.dataLayer = window.dataLayer || [];
+    const originalPush = window.dataLayer.push;
+    window.dataLayer.push = function() {
+      console.log('📊 DataLayer Event:', arguments[0]);
+      return originalPush.apply(this, arguments);
+    };
+  </script>
+</body>
+</html>
