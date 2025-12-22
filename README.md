@@ -2,47 +2,26 @@
 
 UXQA는 웹사이트의 사용자 경험 품질을 모니터링하는 경량 JavaScript 라이브러리입니다.
 
-## 📦 설치
+## 📦 설치 및 사용
 
-### CDN 사용 (권장)
+웹사이트의 `<head>` 태그 안에 다음 코드를 추가하세요:
 
 ```html
-<!-- 설정을 먼저 정의 -->
+<!-- UXQA 설정 -->
 <script>
   window.uxqaConfig = {
-    apiKey: 'YOUR_API_KEY',
-    endpoint: 'https://api.uxqa.io/collect',
     modules: {
       performance: true,
       network: true,
       interaction: true,
       resource: true
     },
-    debug: false
+    debug: false  // 개발 시에는 true로 설정
   };
 </script>
 
 <!-- UXQA 라이브러리 로드 -->
-<script src="https://cdn.uxqa.io/uxqa.min.js"></script>
-```
-
-### NPM 사용
-
-```javascript
-import UXQA from 'uxqa';
-
-const uxqa = new UXQA({
-  apiKey: 'YOUR_API_KEY',
-  endpoint: 'https://api.uxqa.io/collect',
-  modules: {
-    performance: true,
-    network: true,
-    interaction: true,
-    resource: true
-  }
-});
-
-uxqa.init();
+<script src="https://cdn.jsdelivr.net/gh/humanetools/uxqa@main/dist/uxqa.min.js"></script>
 ```
 
 ## 🎯 기능
@@ -66,32 +45,97 @@ uxqa.init();
 
 - **QA0401** - 이미지 로딩 실패 감지
 
-## 🛠️ 개발
+## 📊 DataLayer 이벤트
 
-### 설치
+모든 측정 데이터는 `window.dataLayer`로 전송됩니다.
 
-```bash
-npm install
+### Performance Events
+
+```javascript
+// Web Vitals
+{
+  event: 'web_vitals',
+  performance_vital_name: 'LCP',
+  performance_vital_value: 2500,
+  performance_vital_id: 'v1-...'
+}
+
+// Page Performance
+{
+  event: 'page_performance',
+  performance_total_load_time: 3500,
+  performance_dom_content_loaded_time: 2000
+}
 ```
 
-### 빌드
+### Network Events
 
-```bash
-npm run build
+```javascript
+// Third Party API 실패
+{
+  event: 'third_party_api_failure',
+  api_url: 'https://api.example.com/data',
+  status_code: 500,
+  error_type: 'fetch_error',
+  timestamp: '2024-01-01T00:00:00.000Z'
+}
 ```
 
-빌드 결과물:
-- `dist/uxqa.js` - UMD 포맷 (디버깅용)
-- `dist/uxqa.min.js` - UMD 포맷 압축 (프로덕션용)
-- `dist/uxqa.esm.js` - ES Module 포맷
+### Interaction Events
 
-### 개발 모드
-
-```bash
-npm run dev
+```javascript
+// Dead Click 감지
+{
+  event: 'uxqa_dead_click_candidate',
+  interaction_deadClick_element: 'BUTTON: .btn.primary',
+  interaction_deadClick_text: 'Submit'
+}
 ```
 
-파일 변경 시 자동으로 재빌드됩니다.
+### Resource Events
+
+```javascript
+// 이미지 로딩 실패
+{
+  event: 'img_load_error',
+  network_brokenImgDetector_img_reason: 'img_error',
+  network_brokenImgDetector_img_src: '/images/hero.jpg',
+  network_brokenImgDetector_img_page: 'https://example.com',
+  network_brokenImgDetector_img_area_px2: 230400,
+  network_brokenImgDetector_img_ar_ln: 0.693,
+  network_brokenImgDetector_img_coverage: 0.45
+}
+```
+
+## 🔧 설정 옵션
+
+```javascript
+window.uxqaConfig = {
+  modules: {
+    performance: true,   // Performance 모듈 활성화
+    network: true,       // Network 모듈 활성화
+    interaction: true,   // Interaction 모듈 활성화
+    resource: true       // Resource 모듈 활성화
+  },
+  debug: false          // true: 콘솔 로그 출력, false: 로그 숨김
+};
+```
+
+## 🧪 테스트 방법
+
+1. 웹사이트에 UXQA 설치
+2. 브라우저 개발자 도구 열기 (F12)
+3. Console 탭에서 확인:
+
+```javascript
+// DataLayer 이벤트 확인
+console.log(window.dataLayer);
+
+// UXQA 인스턴스 확인
+console.log(window.UXQA);
+```
+
+4. `debug: true`로 설정하면 상세 로그 확인 가능
 
 ## 📁 프로젝트 구조
 
@@ -120,84 +164,52 @@ uxqa/
 │   └── types/             # 타입 정의
 │       └── index.ts
 ├── dist/                  # 빌드 결과물
+│   ├── uxqa.js
+│   ├── uxqa.min.js       # CDN 배포 파일
+│   └── uxqa.esm.js
 ├── package.json
 ├── tsconfig.json
 ├── rollup.config.js
 └── README.md
 ```
 
-## 📊 DataLayer 이벤트
+## 🛠️ 개발
 
-모든 측정 데이터는 `window.dataLayer`로 전송됩니다.
+### 사전 준비
 
-### Performance Events
+- Node.js 18 이상
+- npm 또는 yarn
 
-```javascript
-{
-  event: 'web_vitals',
-  performance_vital_name: 'LCP',
-  performance_vital_value: 2500,
-  performance_vital_id: 'v1-...'
-}
+### 설치
 
-{
-  event: 'page_performance',
-  performance_total_load_time: 3500,
-  performance_dom_content_loaded_time: 2000
-}
+```bash
+git clone https://github.com/humanetools/uxqa.git
+cd uxqa
+npm install
 ```
 
-### Network Events
+### 빌드
 
-```javascript
-{
-  event: 'third_party_api_failure',
-  api_url: 'https://api.example.com/data',
-  status_code: 500,
-  error_type: 'fetch_error',
-  timestamp: '2024-01-01T00:00:00.000Z'
-}
+```bash
+npm run build
 ```
 
-### Interaction Events
+빌드 결과물:
+- `dist/uxqa.js` - UMD 포맷 (디버깅용)
+- `dist/uxqa.min.js` - UMD 포맷 압축 (프로덕션용)
+- `dist/uxqa.esm.js` - ES Module 포맷
 
-```javascript
-{
-  event: 'uxqa_dead_click_candidate',
-  interaction_deadClick_element: 'BUTTON: .btn.primary',
-  interaction_deadClick_text: 'Submit'
-}
+### 개발 모드
+
+```bash
+npm run dev
 ```
 
-### Resource Events
+파일 변경 시 자동으로 재빌드됩니다.
 
-```javascript
-{
-  event: 'img_load_error',
-  network_brokenImgDetector_img_reason: 'img_error',
-  network_brokenImgDetector_img_src: '/images/hero.jpg',
-  network_brokenImgDetector_img_page: 'https://example.com',
-  network_brokenImgDetector_img_area_px2: 230400,
-  network_brokenImgDetector_img_ar_ln: 0.693,
-  network_brokenImgDetector_img_coverage: 0.45
-}
-```
+## 🐛 버그 리포트
 
-## 🔧 설정 옵션
-
-```typescript
-interface UXQAConfig {
-  apiKey?: string;           // API 키
-  endpoint?: string;         // 데이터 전송 엔드포인트
-  modules?: {
-    performance?: boolean;   // Performance 모듈 활성화
-    network?: boolean;       // Network 모듈 활성화
-    interaction?: boolean;   // Interaction 모듈 활성화
-    resource?: boolean;      // Resource 모듈 활성화
-  };
-  debug?: boolean;          // 디버그 로그 출력
-}
-```
+이슈가 있으면 [GitHub Issues](https://github.com/humanetools/uxqa/issues)에 제보해주세요.
 
 ## 📝 TODO
 
@@ -205,8 +217,13 @@ interface UXQAConfig {
 - [ ] QA0202 - First Party API 에러 감지 구현
 - [ ] 단위 테스트 추가
 - [ ] E2E 테스트 추가
-- [ ] CI/CD 파이프라인 구축
 
 ## 📄 라이선스
 
-MIT
+Copyright (c) 2024 HumaneTools. All Rights Reserved.
+
+이 소프트웨어의 사용, 복사, 수정, 배포는 저작권자의 명시적 서면 허가 없이 금지됩니다.
+
+## 📧 문의
+
+Issues: https://github.com/humanetools/uxqa/issues
