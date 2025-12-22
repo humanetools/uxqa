@@ -28,12 +28,6 @@ UXQA는 웹사이트의 사용자 경험 품질을 모니터링하는 경량 Jav
 
 ### NPM 사용
 
-/*
-```bash
-npm install uxqa
-```
-*/
-
 ```javascript
 import UXQA from 'uxqa';
 
