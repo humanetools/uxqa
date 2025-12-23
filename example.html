@@ -112,14 +112,6 @@
           console.error('API Error:', error);
         });
     }
-    
-    // DataLayer 이벤트 모니터링
-    window.dataLayer = window.dataLayer || [];
-    const originalPush = window.dataLayer.push;
-    window.dataLayer.push = function() {
-      console.log('📊 DataLayer Event:', arguments[0]);
-      return originalPush.apply(this, arguments);
-    };
   </script>
 </body>
 </html>

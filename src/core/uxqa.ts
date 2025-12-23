@@ -33,13 +33,14 @@ class UXQA {
       this.config = mergeConfig(userConfig);
     }
 
-    DataLayerSender.log('UXQA initializing with config:', this.config);
+    // debug 모드 설정
+    DataLayerSender.setDebugMode(this.config.debug || false);
 
     this.registerModules();
     this.initializeModules();
 
     this.initialized = true;
-    DataLayerSender.log('UXQA initialization complete');
+    DataLayerSender.log('Initialization complete');
   }
 
   /**
@@ -67,12 +68,11 @@ class UXQA {
    * Initialize all registered modules
    */
   private initializeModules(): void {
-    this.modules.forEach((module, name) => {
+    this.modules.forEach((module) => {
       try {
         module.init(this.config);
-        DataLayerSender.log(`Module initialized: ${name}`);
       } catch (error) {
-        console.error(`Failed to initialize module: ${name}`, error);
+        console.error(`[UXQA] Failed to initialize module: ${module.name}`, error);
       }
     });
   }

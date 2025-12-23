@@ -9,7 +9,7 @@ export class FirstPartyAPIModule implements Module {
   name = 'FirstPartyAPI';
 
   init(config: UXQAConfig): void {
-    DataLayerSender.log('FirstPartyAPIModule (QA0202) initialized - Implementation pending');
+    DataLayerSender.log('  - QA0202 (First Party API Error): Implementation pending');
     // TODO: First Party API 에러 감지 로직 구현
     // - 동일 도메인 API 요청 모니터링
     // - fetch/XHR interception

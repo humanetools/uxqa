@@ -9,7 +9,7 @@ export class HTTPErrorModule implements Module {
   name = 'HTTPError';
 
   init(config: UXQAConfig): void {
-    DataLayerSender.log('HTTPErrorModule (QA0201) initialized - Implementation pending');
+    DataLayerSender.log('  - QA0201 (4xx, 5xx HTTP Error): Implementation pending');
     // TODO: 4xx, 5xx 에러 감지 로직 구현
     // - fetch/XHR interception
     // - Resource timing API 활용

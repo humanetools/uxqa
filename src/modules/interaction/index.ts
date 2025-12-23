@@ -1,5 +1,6 @@
 import { Module, UXQAConfig } from '../../types';
 import { DeadClickModule } from './dead-click';
+import { DataLayerSender } from '../../utils/dataLayer';
 
 export class InteractionModule implements Module {
   name = 'Interaction';
@@ -11,6 +12,7 @@ export class InteractionModule implements Module {
 
   init(config: UXQAConfig): void {
     this.deadClick.init(config);
+    DataLayerSender.log('Initialized: Interaction Module (QA0301)');
   }
 
   destroy(): void {

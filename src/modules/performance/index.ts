@@ -1,6 +1,7 @@
 import { Module, UXQAConfig } from '../../types';
 import { WebVitalsModule } from './web-vitals';
 import { PagePerformanceModule } from './page-performance';
+import { DataLayerSender } from '../../utils/dataLayer';
 
 export class PerformanceModule implements Module {
   name = 'Performance';
@@ -15,6 +16,7 @@ export class PerformanceModule implements Module {
   init(config: UXQAConfig): void {
     this.webVitals.init(config);
     this.pagePerformance.init(config);
+    DataLayerSender.log('Initialized: Performance Module (QA0101, QA0102)');
   }
 }
 

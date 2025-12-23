@@ -14,10 +14,8 @@ export class DeadClickModule implements Module {
   private lastHref = location.href;
 
   init(config: UXQAConfig): void {
-    DataLayerSender.log('Dead Click Detector initializing...');
     this.setupClickListener();
     this.setupURLChangeDetection();
-    DataLayerSender.log('Dead Click Detector fully initialized and ready');
   }
 
   private setupClickListener(): void {

@@ -2,6 +2,7 @@ import { Module, UXQAConfig } from '../../types';
 import { HTTPErrorModule } from './http-error';
 import { FirstPartyAPIModule } from './first-party-api';
 import { ThirdPartyAPIModule } from './third-party-api';
+import { DataLayerSender } from '../../utils/dataLayer';
 
 export class NetworkModule implements Module {
   name = 'Network';
@@ -19,6 +20,7 @@ export class NetworkModule implements Module {
     this.httpError.init(config);
     this.firstPartyAPI.init(config);
     this.thirdPartyAPI.init(config);
+    DataLayerSender.log('Initialized: Network Module (QA0201, QA0202, QA0203)');
   }
 }
 
