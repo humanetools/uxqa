@@ -5,7 +5,19 @@ export class PagePerformanceModule implements Module {
   name = 'PagePerformance';
 
   init(config: UXQAConfig): void {
-    this.sendPagePerformance();
+    // load 이벤트 후에 측정
+    if (document.readyState === 'complete') {
+      // 이미 로드 완료된 경우
+      this.sendPagePerformance();
+    } else {
+      // 로드 완료 대기
+      window.addEventListener('load', () => {
+        // load 이벤트 직후에는 값이 아직 0일 수 있으므로 약간 지연
+        setTimeout(() => {
+          this.sendPagePerformance();
+        }, 0);
+      });
+    }
   }
 
   private sendPagePerformance(): void {
