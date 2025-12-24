@@ -1,6 +1,6 @@
 {
   "name": "uxqa",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "UXQA JavaScript Library for CDN Distribution",
   "type": "module",
   "main": "dist/uxqa.js",
