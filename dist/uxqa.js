@@ -603,7 +603,10 @@
                 if (!img || img[this.SENT_FLAG])
                     return;
                 img[this.SENT_FLAG] = true;
+                // 실제 로드 시도한 URL (srcset 포함)
                 const src = img.currentSrc || img.src || '';
+                // DOM 경로
+                const elementPath = DOMUtils.formatElementInfo(img);
                 const { w, h } = this.getImageDimensions(img);
                 // 1) A = w*h
                 const A = (w > 0 && h > 0) ? (w * h) : 0;
@@ -617,6 +620,7 @@
                     event: 'img_load_error',
                     network_brokenImgDetector_img_reason: reason,
                     network_brokenImgDetector_img_src: src,
+                    network_brokenImgDetector_img_element: elementPath,
                     network_brokenImgDetector_img_page: location.href,
                     network_brokenImgDetector_img_area_px2: A,
                     network_brokenImgDetector_img_ar_ln: ar,
