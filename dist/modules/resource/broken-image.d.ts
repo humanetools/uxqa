@@ -8,6 +8,4 @@ export declare class BrokenImageModule implements Module {
     private safeLn;
     private pushImageIssue;
     private setupImageErrorListener;
-    private scanNaturalSizeZero;
-    private setupNaturalSizeScanner;
 }

@@ -568,7 +568,6 @@
         }
         init(config) {
             this.setupImageErrorListener();
-            this.setupNaturalSizeScanner();
         }
         getViewportArea() {
             const vw = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0);
@@ -638,31 +637,6 @@
                     this.pushImageIssue(target, 'img_error');
                 }
             }, true);
-        }
-        scanNaturalSizeZero() {
-            try {
-                const imgs = document.getElementsByTagName('img');
-                for (let i = 0; i < imgs.length; i++) {
-                    const img = imgs[i];
-                    if (img &&
-                        img.complete === true &&
-                        (img.naturalWidth === 0 || img.naturalHeight === 0)) {
-                        this.pushImageIssue(img, 'natural_size_zero');
-                    }
-                }
-            }
-            catch (e) {
-                // Silent fail
-            }
-        }
-        setupNaturalSizeScanner() {
-            if (document.readyState === 'loading') {
-                document.addEventListener('DOMContentLoaded', () => this.scanNaturalSizeZero());
-            }
-            else {
-                this.scanNaturalSizeZero();
-            }
-            window.addEventListener('load', () => this.scanNaturalSizeZero());
         }
     }
 

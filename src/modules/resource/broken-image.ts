@@ -8,7 +8,6 @@ export class BrokenImageModule implements Module {
 
   init(config: UXQAConfig): void {
     this.setupImageErrorListener();
-    this.setupNaturalSizeScanner();
   }
 
   private getViewportArea(): { vw: number; vh: number; vA: number } {
@@ -90,33 +89,5 @@ export class BrokenImageModule implements Module {
         this.pushImageIssue(target as HTMLImageElement, 'img_error');
       }
     }, true);
-  }
-
-  private scanNaturalSizeZero(): void {
-    try {
-      const imgs = document.getElementsByTagName('img');
-      for (let i = 0; i < imgs.length; i++) {
-        const img = imgs[i];
-        if (
-          img &&
-          img.complete === true &&
-          (img.naturalWidth === 0 || img.naturalHeight === 0)
-        ) {
-          this.pushImageIssue(img, 'natural_size_zero');
-        }
-      }
-    } catch (e) {
-      // Silent fail
-    }
-  }
-
-  private setupNaturalSizeScanner(): void {
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', () => this.scanNaturalSizeZero());
-    } else {
-      this.scanNaturalSizeZero();
-    }
-
-    window.addEventListener('load', () => this.scanNaturalSizeZero());
   }
 }

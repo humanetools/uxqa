@@ -8,8 +8,6 @@
   <!-- UXQA 설정 -->
   <script>
     window.uxqaConfig = {
-      apiKey: 'demo-api-key',
-      endpoint: 'https://api.uxqa.io/collect',
       modules: {
         performance: true,
         network: true,
@@ -82,11 +80,29 @@
   
   <div class="test-section">
     <h2>Resource 테스트 - Broken Image</h2>
-    <p>존재하지 않는 이미지 (에러 발생):</p>
+    
+    <p><strong>1. 즉시 로드 실패:</strong></p>
     <img src="https://invalid-domain-12345.com/image.jpg" alt="Broken Image">
     
-    <p>정상 이미지:</p>
+    <p><strong>2. 정상 이미지:</strong></p>
     <img src="https://via.placeholder.com/200" alt="Valid Image">
+    
+    <p><strong>3. Lazy-load 성공 (감지 안 됨 ✅):</strong></p>
+    <img data-src="https://via.placeholder.com/200/00FF00/FFFFFF?text=Lazy+Success" 
+         loading="lazy" 
+         class="lazyload"
+         alt="Lazy Load Success">
+    
+    <p><strong>4. Lazy-load 실패 (스크롤 후 감지됨 ✅):</strong></p>
+    <img data-src="https://invalid-domain-99999.com/lazy-broken.jpg" 
+         loading="lazy" 
+         class="lazyload"
+         alt="Lazy Load Broken">
+    
+    <p style="color: #666; font-size: 14px;">
+      ℹ️ Lazy-load 이미지는 아래로 스크롤해야 로드가 시작됩니다.<br>
+      성공 이미지는 녹색 배경으로 표시되고, 실패 이미지는 에러 발생 시 DataLayer에 기록됩니다.
+    </p>
   </div>
   
   <div class="test-section">
@@ -94,6 +110,40 @@
     <button onclick="testThirdPartyAPI()">Third Party API 에러 발생시키기</button>
     <div id="api-result"></div>
   </div>
+  
+  <script>
+    // Simple Lazy Load Implementation
+    document.addEventListener('DOMContentLoaded', function() {
+      const lazyImages = document.querySelectorAll('img.lazyload');
+      
+      if ('IntersectionObserver' in window) {
+        const imageObserver = new IntersectionObserver((entries, observer) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              const img = entry.target;
+              const dataSrc = img.getAttribute('data-src');
+              if (dataSrc) {
+                img.src = dataSrc;
+                img.classList.remove('lazyload');
+                img.classList.add('lazyloaded');
+              }
+              observer.unobserve(img);
+            }
+          });
+        });
+        
+        lazyImages.forEach(img => imageObserver.observe(img));
+      } else {
+        // Fallback for older browsers
+        lazyImages.forEach(img => {
+          const dataSrc = img.getAttribute('data-src');
+          if (dataSrc) {
+            img.src = dataSrc;
+          }
+        });
+      }
+    });
+  </script>
   
   <script>
     // Third Party API 테스트
