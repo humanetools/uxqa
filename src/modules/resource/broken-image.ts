@@ -1,5 +1,6 @@
 import { Module, UXQAConfig, ImageError } from '../../types';
 import { DataLayerSender } from '../../utils/dataLayer';
+import { DOMUtils } from '../../utils/dom';
 
 export class BrokenImageModule implements Module {
   name = 'BrokenImage';
@@ -50,7 +51,10 @@ export class BrokenImageModule implements Module {
       if (!img || (img as any)[this.SENT_FLAG]) return;
       (img as any)[this.SENT_FLAG] = true;
 
+      // 실제 로드 시도한 URL (srcset 포함)
       const src = img.currentSrc || img.src || '';
+      // DOM 경로
+      const elementPath = DOMUtils.formatElementInfo(img);
       const { w, h } = this.getImageDimensions(img);
 
       // 1) A = w*h
@@ -68,6 +72,7 @@ export class BrokenImageModule implements Module {
         event: 'img_load_error',
         network_brokenImgDetector_img_reason: reason,
         network_brokenImgDetector_img_src: src,
+        network_brokenImgDetector_img_element: elementPath,
         network_brokenImgDetector_img_page: location.href,
         network_brokenImgDetector_img_area_px2: A,
         network_brokenImgDetector_img_ar_ln: ar,

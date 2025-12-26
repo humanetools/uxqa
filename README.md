@@ -1,6 +1,8 @@
 # UXQA JavaScript Library
 
-UXQA는 웹사이트의 사용자 경험 품질을 모니터링하는 경량 JavaScript 라이브러리입니다.
+UXQA는 웹사이트의 사용자 경험 품질을 모니터링하는 경량 JavaScript 라이브러리입니다. 본 라이브러리를 통해 데이터는 dataLayer로 제공되며 Google Tagmanager를 통해 데이터를 GA4에 보내 리포팅할 수 있습니다.
+
+따라서, 데이터 수집을 위해서는 별도 GTM셋팅을 하셔야 합니다.
 
 현재는 개발 초기단계이며 v1.0.0이 아닌 v0.1.0상태입니다.
 
