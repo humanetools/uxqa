@@ -394,6 +394,7 @@ class DeadClickModule {
         this.OBSERVATION_WINDOW_MS = 800;
         this.urlChangeDetected = false;
         this.domMutationDetected = false;
+        this.userActivityDetected = false; // 새로 추가
         this.observerInstance = null;
         this.timeoutId = null;
         this.currentClickContext = null;
@@ -402,6 +403,7 @@ class DeadClickModule {
     init(config) {
         this.setupClickListener();
         this.setupURLChangeDetection();
+        this.setupUserActivityDetection(); // 새로 추가
     }
     setupClickListener() {
         document.addEventListener('click', (e) => {
@@ -504,8 +506,8 @@ class DeadClickModule {
         }, 100);
     }
     reportDeadClickCandidate() {
-        DataLayerSender.log('Dead Click timer fired. URL changed:', this.urlChangeDetected, 'DOM changed:', this.domMutationDetected);
-        if (this.urlChangeDetected || this.domMutationDetected) {
+        DataLayerSender.log('Dead Click timer fired. URL changed:', this.urlChangeDetected, 'DOM changed:', this.domMutationDetected, 'User activity:', this.userActivityDetected);
+        if (this.urlChangeDetected || this.domMutationDetected || this.userActivityDetected) {
             DataLayerSender.log('Dead Click - Response detected, not a dead click');
             this.cleanup();
             return;
@@ -533,10 +535,66 @@ class DeadClickModule {
         }
         this.urlChangeDetected = false;
         this.domMutationDetected = false;
+        this.userActivityDetected = false; // 추가
         this.currentClickContext = null;
     }
     destroy() {
         this.cleanup();
+    }
+    setupUserActivityDetection() {
+        const originalAlert = window.alert;
+        const originalConfirm = window.confirm;
+        const originalPrompt = window.prompt;
+        const originalOpen = window.open;
+        const originalScrollTo = window.scrollTo;
+        const originalScrollBy = window.scrollBy;
+        const originalSetItem = Storage.prototype.setItem;
+        // alert, confirm, prompt 감지
+        window.alert = (...args) => {
+            DataLayerSender.log('Dead Click - alert() detected');
+            this.userActivityDetected = true;
+            return originalAlert.apply(window, args);
+        };
+        window.confirm = (...args) => {
+            DataLayerSender.log('Dead Click - confirm() detected');
+            this.userActivityDetected = true;
+            return originalConfirm.apply(window, args);
+        };
+        window.prompt = (...args) => {
+            DataLayerSender.log('Dead Click - prompt() detected');
+            this.userActivityDetected = true;
+            return originalPrompt.apply(window, args);
+        };
+        // window.open 감지
+        window.open = (...args) => {
+            DataLayerSender.log('Dead Click - window.open() detected');
+            this.userActivityDetected = true;
+            return originalOpen.apply(window, args);
+        };
+        // scroll 감지
+        window.scrollTo = (...args) => {
+            DataLayerSender.log('Dead Click - scrollTo() detected');
+            this.userActivityDetected = true;
+            return originalScrollTo.apply(window, args);
+        };
+        window.scrollBy = (...args) => {
+            DataLayerSender.log('Dead Click - scrollBy() detected');
+            this.userActivityDetected = true;
+            return originalScrollBy.apply(window, args);
+        };
+        // localStorage/sessionStorage 감지
+        Storage.prototype.setItem = function (...args) {
+            DataLayerSender.log('Dead Click - storage.setItem() detected');
+            if (this === window.localStorage || this === window.sessionStorage) {
+                const module = window.__uxqa_deadclick_module__;
+                if (module) {
+                    module.userActivityDetected = true;
+                }
+            }
+            return originalSetItem.apply(this, args);
+        };
+        // 모듈 인스턴스를 window에 저장 (storage 감지용)
+        window.__uxqa_deadclick_module__ = this;
     }
 }
 

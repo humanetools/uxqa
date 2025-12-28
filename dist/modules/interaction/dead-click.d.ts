@@ -4,6 +4,7 @@ export declare class DeadClickModule implements Module {
     private OBSERVATION_WINDOW_MS;
     private urlChangeDetected;
     private domMutationDetected;
+    private userActivityDetected;
     private observerInstance;
     private timeoutId;
     private currentClickContext;
@@ -18,4 +19,5 @@ export declare class DeadClickModule implements Module {
     private reportDeadClickCandidate;
     private cleanup;
     destroy(): void;
+    private setupUserActivityDetection;
 }
