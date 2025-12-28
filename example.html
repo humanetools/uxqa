@@ -71,11 +71,78 @@
   
   <div class="test-section">
     <h2>Interaction 테스트 - Dead Click</h2>
-    <p>아래 버튼을 클릭하면 Dead Click으로 감지됩니다 (아무 동작도 하지 않음):</p>
-    <button class="dead-click-btn">Dead Click 테스트</button>
     
-    <p>이 버튼은 정상 동작합니다:</p>
-    <button onclick="alert('정상 동작!')">정상 버튼</button>
+    <h3>1. Dead Click (감지되어야 함 ✅)</h3>
+    <p>아무 동작도 하지 않는 버튼:</p>
+    <button class="dead-click-btn" id="deadClickBtn">Dead Click 테스트</button>
+    <p id="deadClickResult" style="color: red; font-size: 12px;"></p>
+    
+    <h3>2. URL 변경 (감지 안 됨 ✅)</h3>
+    <p>URL을 변경하는 버튼 (정상 동작):</p>
+    <button onclick="testURLChange()">URL 변경 테스트</button>
+    <p id="urlChangeResult" style="color: green; font-size: 12px;"></p>
+    
+    <h3>3. DOM 변화 (감지 안 됨 ✅)</h3>
+    <p>DOM을 변경하는 버튼 (정상 동작):</p>
+    <button onclick="testDOMChange()">DOM 변경 테스트</button>
+    <div id="domChangeTarget" style="padding: 10px; border: 1px dashed #ccc; margin: 10px 0;">
+      여기에 내용이 추가됩니다
+    </div>
+    
+    <h3>4. MutationObserver 미감지 케이스</h3>
+    <p>각 버튼이 Dead Click으로 잘못 감지되는지 테스트:</p>
+    
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 10px 0;">
+      <div>
+        <button onclick="testAlert()">alert() 테스트</button>
+        <p style="font-size: 11px; color: #666;">브라우저 팝업 (DOM 변화 없음)</p>
+      </div>
+      
+      <div>
+        <button onclick="testConfirm()">confirm() 테스트</button>
+        <p style="font-size: 11px; color: #666;">브라우저 확인창 (DOM 변화 없음)</p>
+      </div>
+      
+      <div>
+        <button onclick="testConsoleLog()">console.log() 테스트</button>
+        <p style="font-size: 11px; color: #666;">콘솔 출력 (DOM 변화 없음)</p>
+      </div>
+      
+      <div>
+        <button onclick="testLocalStorage()">localStorage 테스트</button>
+        <p style="font-size: 11px; color: #666;">저장소 변경 (DOM 변화 없음)</p>
+      </div>
+      
+      <div>
+        <button onclick="testFetch()">fetch() 테스트</button>
+        <p style="font-size: 11px; color: #666;">API 호출만 (DOM 변화 없음)</p>
+      </div>
+      
+      <div>
+        <button onclick="testDataLayerPush()">dataLayer.push() 테스트</button>
+        <p style="font-size: 11px; color: #666;">GTM 이벤트만 (DOM 변화 없음)</p>
+      </div>
+      
+      <div>
+        <button onclick="testScrollTo()">scroll 테스트</button>
+        <p style="font-size: 11px; color: #666;">스크롤 이동 (DOM 변화 없음)</p>
+      </div>
+      
+      <div>
+        <button onclick="testWindowOpen()">window.open() 테스트</button>
+        <p style="font-size: 11px; color: #666;">새 창 열기 (DOM 변화 없음)</p>
+      </div>
+    </div>
+    
+    <div style="background: #f0f0f0; padding: 15px; border-radius: 5px; margin-top: 20px;">
+      <h4 style="margin-top: 0;">📊 테스트 결과 예상:</h4>
+      <ul style="margin: 5px 0; padding-left: 20px; font-size: 14px;">
+        <li><strong>Dead Click 버튼:</strong> ❌ Dead Click 감지 (DataLayer 이벤트 발생)</li>
+        <li><strong>URL 변경:</strong> ✅ 정상 (URL 변화 감지 → Dead Click 아님)</li>
+        <li><strong>DOM 변경:</strong> ✅ 정상 (DOM 변화 감지 → Dead Click 아님)</li>
+        <li><strong>alert, console 등:</strong> ⚠️ Dead Click으로 잘못 감지됨 (개선 필요)</li>
+      </ul>
+    </div>
   </div>
   
   <div class="test-section">
@@ -161,6 +228,80 @@
           resultDiv.innerHTML = '에러 발생! (dataLayer에 기록됨)';
           console.error('API Error:', error);
         });
+    }
+    
+    // Dead Click 테스트 함수들
+    
+    // 1. URL 변경 테스트
+    function testURLChange() {
+      const currentHash = window.location.hash;
+      const newHash = currentHash === '#test' ? '#test2' : '#test';
+      window.location.hash = newHash;
+      document.getElementById('urlChangeResult').textContent = '✅ URL 변경됨: ' + newHash;
+    }
+    
+    // 2. DOM 변경 테스트
+    function testDOMChange() {
+      const target = document.getElementById('domChangeTarget');
+      const newElement = document.createElement('div');
+      newElement.style.cssText = 'background: #e3f2fd; padding: 5px; margin: 5px 0; border-radius: 3px;';
+      newElement.textContent = '✅ ' + new Date().toLocaleTimeString() + ' - 새 요소 추가됨';
+      target.appendChild(newElement);
+    }
+    
+    // 3. alert() - DOM 변화 없음
+    function testAlert() {
+      alert('alert() 실행! 이 버튼은 Dead Click으로 잘못 감지될 수 있습니다.');
+    }
+    
+    // 4. confirm() - DOM 변화 없음
+    function testConfirm() {
+      const result = confirm('confirm() 실행! 이 버튼은 Dead Click으로 잘못 감지될 수 있습니다.');
+      console.log('Confirm result:', result);
+    }
+    
+    // 5. console.log() - DOM 변화 없음
+    function testConsoleLog() {
+      console.log('✅ console.log() 실행됨 - Dead Click으로 잘못 감지될 수 있습니다.');
+      console.info('현재 시간:', new Date().toISOString());
+    }
+    
+    // 6. localStorage - DOM 변화 없음
+    function testLocalStorage() {
+      localStorage.setItem('uxqa_test', new Date().toISOString());
+      console.log('✅ localStorage 저장됨 - Dead Click으로 잘못 감지될 수 있습니다.');
+    }
+    
+    // 7. fetch() - DOM 변화 없음 (응답 처리 안 함)
+    function testFetch() {
+      fetch('https://jsonplaceholder.typicode.com/todos/1')
+        .then(response => response.json())
+        .then(data => console.log('Fetch 성공:', data))
+        .catch(error => console.error('Fetch 실패:', error));
+      console.log('✅ fetch() 호출됨 - Dead Click으로 잘못 감지될 수 있습니다.');
+    }
+    
+    // 8. dataLayer.push() - DOM 변화 없음
+    function testDataLayerPush() {
+      window.dataLayer = window.dataLayer || [];
+      window.dataLayer.push({
+        event: 'custom_test_event',
+        category: 'test',
+        action: 'click'
+      });
+      console.log('✅ dataLayer.push() 실행됨 - Dead Click으로 잘못 감지될 수 있습니다.');
+    }
+    
+    // 9. scroll - DOM 변화 없음
+    function testScrollTo() {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      console.log('✅ scroll 실행됨 - Dead Click으로 잘못 감지될 수 있습니다.');
+    }
+    
+    // 10. window.open() - DOM 변화 없음
+    function testWindowOpen() {
+      window.open('about:blank', '_blank', 'width=400,height=300');
+      console.log('✅ window.open() 실행됨 - Dead Click으로 잘못 감지될 수 있습니다.');
     }
   </script>
 </body>
