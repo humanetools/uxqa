@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html lang="ko">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>UXQA 사용 예제</title>
-  
+
   <!-- UXQA 설정 -->
   <script>
     window.uxqaConfig = {
@@ -17,10 +18,10 @@
       debug: true // 개발 시 true로 설정하여 콘솔 로그 확인
     };
   </script>
-  
+
   <!-- UXQA 라이브러리 로드 -->
   <script src="https://cdn.jsdelivr.net/gh/humanetools/uxqa@main/dist/uxqa.min.js"></script>
-  
+
   <style>
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -28,14 +29,14 @@
       margin: 50px auto;
       padding: 20px;
     }
-    
+
     .test-section {
       margin: 30px 0;
       padding: 20px;
       border: 1px solid #ddd;
       border-radius: 8px;
     }
-    
+
     button {
       padding: 10px 20px;
       margin: 5px;
@@ -45,80 +46,78 @@
       border: none;
       border-radius: 4px;
     }
-    
+
     button:hover {
       background: #0056b3;
     }
-    
+
     .dead-click-btn {
       background: #dc3545;
     }
-    
+
     img {
       max-width: 200px;
       margin: 10px;
     }
   </style>
 </head>
+
 <body>
   <h1>UXQA 테스트 페이지</h1>
-  
-  <div class="test-section">
-    <h2>Performance 테스트</h2>
-    <p>이 페이지가 로드되면 자동으로 Web Vitals와 Page Performance가 측정됩니다.</p>
-    <p>개발자 도구 콘솔을 열어 dataLayer 이벤트를 확인하세요.</p>
-  </div>
-  
+  <p>Console을 열어서 확인하세요.</p>
+
+
+
   <div class="test-section">
     <h2>Interaction 테스트 - Dead Click</h2>
-    
+
     <h3>1. Dead Click (감지되어야 함 ✅)</h3>
     <p>아무 동작도 하지 않는 버튼:</p>
     <button class="dead-click-btn" id="deadClickBtn">Dead Click 테스트</button>
     <p id="deadClickResult" style="color: red; font-size: 12px;"></p>
-    
+
     <h3>2. URL 변경 (감지 안 됨 ✅)</h3>
     <p>URL을 변경하는 버튼 (정상 동작):</p>
     <button onclick="testURLChange()">URL 변경 테스트</button>
     <p id="urlChangeResult" style="color: green; font-size: 12px;"></p>
-    
+
     <h3>3. DOM 변화 (감지 안 됨 ✅)</h3>
     <p>DOM을 변경하는 버튼 (정상 동작):</p>
     <button onclick="testDOMChange()">DOM 변경 테스트</button>
     <div id="domChangeTarget" style="padding: 10px; border: 1px dashed #ccc; margin: 10px 0;">
       여기에 내용이 추가됩니다
     </div>
-    
+
     <h3>4. MutationObserver 미감지 케이스</h3>
     <p>각 버튼이 Dead Click으로 잘못 감지되는지 테스트:</p>
-    
+
     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 10px 0;">
       <div>
         <button onclick="testAlert()">alert() 테스트</button>
         <p style="font-size: 11px; color: #666;">브라우저 팝업 (DOM 변화 없음)</p>
       </div>
-      
+
       <div>
         <button onclick="testConfirm()">confirm() 테스트</button>
         <p style="font-size: 11px; color: #666;">브라우저 확인창 (DOM 변화 없음)</p>
       </div>
-      
+
       <div>
         <button onclick="testLocalStorage()">localStorage 테스트</button>
         <p style="font-size: 11px; color: #666;">저장소 변경 (DOM 변화 없음)</p>
       </div>
-      
+
       <div>
         <button onclick="testScrollTo()">scroll 테스트</button>
         <p style="font-size: 11px; color: #666;">스크롤 이동 (DOM 변화 없음)</p>
       </div>
-      
+
       <div>
         <button onclick="testWindowOpen()">window.open() 테스트</button>
         <p style="font-size: 11px; color: #666;">새 창 열기 (DOM 변화 없음)</p>
       </div>
     </div>
-    
+
     <div style="background: #f0f0f0; padding: 15px; border-radius: 5px; margin-top: 20px;">
       <h4 style="margin-top: 0;">📊 테스트 결과 예상:</h4>
       <ul style="margin: 5px 0; padding-left: 20px; font-size: 14px;">
@@ -129,45 +128,41 @@
       </ul>
     </div>
   </div>
-  
+
   <div class="test-section">
     <h2>Resource 테스트 - Broken Image</h2>
-    
+
     <p><strong>1. 즉시 로드 실패:</strong></p>
     <img src="https://invalid-domain-12345.com/image.jpg" alt="Broken Image">
-    
+
     <p><strong>2. 정상 이미지:</strong></p>
     <img src="https://via.placeholder.com/200" alt="Valid Image">
-    
+
     <p><strong>3. Lazy-load 성공 (감지 안 됨 ✅):</strong></p>
-    <img data-src="https://via.placeholder.com/200/00FF00/FFFFFF?text=Lazy+Success" 
-         loading="lazy" 
-         class="lazyload"
-         alt="Lazy Load Success">
-    
+    <img data-src="https://via.placeholder.com/200/00FF00/FFFFFF?text=Lazy+Success" loading="lazy" class="lazyload"
+      alt="Lazy Load Success">
+
     <p><strong>4. Lazy-load 실패 (스크롤 후 감지됨 ✅):</strong></p>
-    <img data-src="https://invalid-domain-99999.com/lazy-broken.jpg" 
-         loading="lazy" 
-         class="lazyload"
-         alt="Lazy Load Broken">
-    
+    <img data-src="https://invalid-domain-99999.com/lazy-broken.jpg" loading="lazy" class="lazyload"
+      alt="Lazy Load Broken">
+
     <p style="color: #666; font-size: 14px;">
       ℹ️ Lazy-load 이미지는 아래로 스크롤해야 로드가 시작됩니다.<br>
       성공 이미지는 녹색 배경으로 표시되고, 실패 이미지는 에러 발생 시 DataLayer에 기록됩니다.
     </p>
   </div>
-  
+
   <div class="test-section">
     <h2>Network 테스트 - Third Party API</h2>
     <button onclick="testThirdPartyAPI()">Third Party API 에러 발생시키기</button>
     <div id="api-result"></div>
   </div>
-  
+
   <script>
     // Simple Lazy Load Implementation
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
       const lazyImages = document.querySelectorAll('img.lazyload');
-      
+
       if ('IntersectionObserver' in window) {
         const imageObserver = new IntersectionObserver((entries, observer) => {
           entries.forEach(entry => {
@@ -183,7 +178,7 @@
             }
           });
         });
-        
+
         lazyImages.forEach(img => imageObserver.observe(img));
       } else {
         // Fallback for older browsers
@@ -196,13 +191,13 @@
       }
     });
   </script>
-  
+
   <script>
     // Third Party API 테스트
     function testThirdPartyAPI() {
       const resultDiv = document.getElementById('api-result');
       resultDiv.innerHTML = 'API 호출 중...';
-      
+
       // 존재하지 않는 외부 API 호출 (에러 발생)
       fetch('https://invalid-api-domain-12345.com/data')
         .then(response => response.json())
@@ -214,9 +209,9 @@
           console.error('API Error:', error);
         });
     }
-    
+
     // Dead Click 테스트 함수들
-    
+
     // 1. URL 변경 테스트
     function testURLChange() {
       const currentHash = window.location.hash;
@@ -224,7 +219,7 @@
       window.location.hash = newHash;
       document.getElementById('urlChangeResult').textContent = '✅ URL 변경됨: ' + newHash;
     }
-    
+
     // 2. DOM 변경 테스트
     function testDOMChange() {
       const target = document.getElementById('domChangeTarget');
@@ -233,30 +228,30 @@
       newElement.textContent = '✅ ' + new Date().toLocaleTimeString() + ' - 새 요소 추가됨';
       target.appendChild(newElement);
     }
-    
+
     // 3. alert() - DOM 변화 없음
     function testAlert() {
       alert('alert() 실행!');
     }
-    
+
     // 4. confirm() - DOM 변화 없음
     function testConfirm() {
       const result = confirm('confirm() 실행!');
       console.log('Confirm result:', result);
     }
-    
+
     // 5. localStorage - DOM 변화 없음
     function testLocalStorage() {
       localStorage.setItem('uxqa_test', new Date().toISOString());
       console.log('✅ localStorage 저장됨');
     }
-    
+
     // 6. scroll - DOM 변화 없음
     function testScrollTo() {
       window.scrollTo({ top: 0, behavior: 'smooth' });
       console.log('✅ scroll 실행됨');
     }
-    
+
     // 7. window.open() - DOM 변화 없음
     function testWindowOpen() {
       window.open('about:blank', '_blank', 'width=400,height=300');
@@ -264,4 +259,5 @@
     }
   </script>
 </body>
+
 </html>
